@@ -3,6 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1067D3E6-EC0F-4D6C-8525-68E821018EEC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrightHR.Checkout.Application", "src\BrightHR.Checkout.Application\BrightHR.Checkout.Application.csproj", "{90D05357-0899-455C-8AB2-79C3871406DD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{C6857F08-A8BF-4681-8CF6-AEE50C33A1CA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrightHR.Checkout.Application.Tests", "tests\BrightHR.Checkout.Application.Tests\BrightHR.Checkout.Application.Tests.csproj", "{CF1B10F7-28BB-4A8D-85DF-6C13D5F8E287}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -10,5 +18,19 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{90D05357-0899-455C-8AB2-79C3871406DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90D05357-0899-455C-8AB2-79C3871406DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90D05357-0899-455C-8AB2-79C3871406DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90D05357-0899-455C-8AB2-79C3871406DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF1B10F7-28BB-4A8D-85DF-6C13D5F8E287}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF1B10F7-28BB-4A8D-85DF-6C13D5F8E287}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF1B10F7-28BB-4A8D-85DF-6C13D5F8E287}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF1B10F7-28BB-4A8D-85DF-6C13D5F8E287}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{90D05357-0899-455C-8AB2-79C3871406DD} = {1067D3E6-EC0F-4D6C-8525-68E821018EEC}
+		{CF1B10F7-28BB-4A8D-85DF-6C13D5F8E287} = {C6857F08-A8BF-4681-8CF6-AEE50C33A1CA}
 	EndGlobalSection
 EndGlobal
