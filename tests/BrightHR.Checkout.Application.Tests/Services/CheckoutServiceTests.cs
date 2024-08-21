@@ -105,5 +105,46 @@ public class CheckoutServiceTests
         Assert.Equal(expected, actual);
     }
 
+    [Fact]
+    public void GetTotalPrice_WhenOrderScannedIsRandom_ReturnsCorrectlyDiscountedPrice() 
+    {
+        // Arrange
+        var items = new string[] { "A", "A", "A", "A", "B", "B", "C", "C", "D" };
+        Random.Shared.Shuffle(items);
+
+        var specialPriceRepositoryMock = new Mock<ISpecialPriceRepository>();
+        specialPriceRepositoryMock
+            .Setup((repo) => repo.GetSpecialPrice("A"))
+            .Returns(new SpecialPrice("A", 3, 25));
+
+        var unitPriceRepositoryMock = new Mock<IUnitPriceRepository>();
+        unitPriceRepositoryMock
+            .Setup((repo) => repo.GetUnitPrice("A"))
+            .Returns(10);
+        unitPriceRepositoryMock
+            .Setup((repo) => repo.GetUnitPrice("B"))
+            .Returns(100);
+        unitPriceRepositoryMock
+            .Setup((repo) => repo.GetUnitPrice("C"))
+            .Returns(1000);
+        unitPriceRepositoryMock
+            .Setup((repo) => repo.GetUnitPrice("D"))
+            .Returns(10000);
+
+        var checkout = new CheckoutService(unitPriceRepositoryMock.Object, specialPriceRepositoryMock.Object);
+        var expected = 12235;
+
+        foreach(var sku in items) 
+        {
+            checkout.Scan(sku);
+        }
+
+        // Act
+        var actual = checkout.GetTotalPrice();
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
     #endregion GetTotalPrice
 }
