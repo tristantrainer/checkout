@@ -33,9 +33,9 @@ internal sealed class CheckoutService(IUnitPriceRepository unitPriceRepository, 
         {
             var numberOfItems = _items[sku];
 
-            var (remaining, subtotal) = CalculateDiscountedItemsTotal(sku, numberOfItems);
+            var (remaining, discountedTotal) = CalculateDiscountedItemsTotal(sku, numberOfItems);
 
-            total += subtotal + remaining * _unitPrices[sku].Price;
+            total += discountedTotal + remaining * _unitPrices[sku].Price;
         }
 
         return total;
@@ -51,8 +51,8 @@ internal sealed class CheckoutService(IUnitPriceRepository unitPriceRepository, 
         var discountedQuantity = initialItems / specialPrice.Quantity;
         var remainingItems = initialItems % specialPrice.Quantity;
 
-        var subtotal = discountedQuantity * specialPrice.Price;
+        var discountedTotal = discountedQuantity * specialPrice.Price;
 
-        return (remainingItems, subtotal);
+        return (remainingItems, discountedTotal);
     }
 }
