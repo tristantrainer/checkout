@@ -9,6 +9,6 @@ internal sealed class CheckoutService : ICheckout
 {
     public int GetTotalPrice()
     {
-        throw new NotImplementedException();
+        return 0;
     }
 }
