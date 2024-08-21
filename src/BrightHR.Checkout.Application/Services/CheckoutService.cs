@@ -14,7 +14,7 @@ internal sealed class CheckoutService(IUnitPriceRepository unitPriceRepository) 
 
     public void Scan(string sku)
     {
-        _currentTotal = unitPriceRepository.GetUnitPrice(sku);
+        _currentTotal += unitPriceRepository.GetUnitPrice(sku);
     }
 
     public int GetTotalPrice()
