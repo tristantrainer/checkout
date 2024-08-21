@@ -1,4 +1,5 @@
 using BrightHR.Checkout.Application.Entities;
+using BrightHR.Checkout.Application.Extensions;
 using BrightHR.Checkout.Application.Repositories;
 
 namespace BrightHR.Checkout.Application.Services;
@@ -22,7 +23,7 @@ internal sealed class CheckoutService(IUnitPriceRepository unitPriceRepository, 
 
     public void Scan(string sku)
     {
-        _items[sku] = _items.TryGetValue(sku, out int value) ? value + 1 : 1;
+        _items.AddOrUpdate(sku, 1, (count) => count + 1);
     }
 
     public int GetTotalPrice()
