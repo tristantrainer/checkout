@@ -14,7 +14,7 @@ internal sealed class CheckoutService(IUnitPriceRepository unitPriceRepository, 
 
     public void Scan(string sku)
     {
-        _items[sku] += _items.ContainsKey(sku) ? _items[sku] + 1 : 1;
+        _items[sku] = _items.ContainsKey(sku) ? _items[sku] + 1 : 1;
     }
 
     public int GetTotalPrice()
@@ -40,6 +40,11 @@ internal sealed class CheckoutService(IUnitPriceRepository unitPriceRepository, 
         if(specialPrice is null)
             return (initialItems, 0);
 
-        throw new NotImplementedException();
+        var discountedQuanity = initialItems / specialPrice.Quantity;
+        var remainingItems = initialItems % specialPrice.Quantity;
+
+        var subtotal = discountedQuanity * specialPrice.Price;
+
+        return (remainingItems, subtotal);
     }
 }
