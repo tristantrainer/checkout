@@ -1,4 +1,6 @@
+using BrightHR.Checkout.Application.Repositories;
 using BrightHR.Checkout.Application.Services;
+using Moq;
 
 namespace BrightHR.Checkout.Application.Tests.Services;
 
@@ -10,7 +12,8 @@ public class CheckoutServiceTests
     public void GetTotalPrice_WhenCheckoutIsEmpty_ReturnsZero() 
     {
         // Arrange
-        var checkout = new CheckoutService();
+        var unitPriceRepositoryMock = new Mock<IUnitPriceRepository>();
+        var checkout = new CheckoutService(unitPriceRepositoryMock.Object);
         var expected = 0;
 
         // Act
@@ -24,10 +27,16 @@ public class CheckoutServiceTests
     public void GetTotalPrice_WhenItemScanned_ReturnsItemPrice() 
     {
         // Arrange
-        var checkout = new CheckoutService();
+        var unitPrice = 123;
+        var sku = "A";
+
+        var unitPriceRepositoryMock = new Mock<IUnitPriceRepository>();
+        unitPriceRepositoryMock.Setup((repo) => repo.GetUnitPrice(sku)).Returns(unitPrice);
+
+        var checkout = new CheckoutService(unitPriceRepositoryMock.Object);
         var expected = 123;
 
-        checkout.Scan("A");
+        checkout.Scan(sku);
 
         // Act
         var actual = checkout.GetTotalPrice();

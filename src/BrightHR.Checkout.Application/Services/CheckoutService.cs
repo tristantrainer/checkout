@@ -8,17 +8,17 @@ public interface ICheckout
     int GetTotalPrice();
 }
 
-internal sealed class CheckoutService : ICheckout
+internal sealed class CheckoutService(IUnitPriceRepository unitPriceRepository) : ICheckout
 {
-    private int _total = 0;
+    private int _currentTotal = 0;
 
     public void Scan(string sku)
     {
-        _total += 123;
+        _currentTotal = unitPriceRepository.GetUnitPrice(sku);
     }
 
     public int GetTotalPrice()
     {
-        return _total;
+        return _currentTotal;
     }
 }
