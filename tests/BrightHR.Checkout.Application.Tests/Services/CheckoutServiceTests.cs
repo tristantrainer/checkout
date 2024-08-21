@@ -146,5 +146,60 @@ public class CheckoutServiceTests
         Assert.Equal(expected, actual);
     }
 
+    [Fact]
+    public void GetTotalPrice_WhenUnitPricesUpdateDuringCheckout_ReturnsTotalInitialPrice() 
+    {
+        // Arrange
+        var specialPriceRepositoryMock = new Mock<ISpecialPriceRepository>();
+        var unitPriceRepositoryMock = new Mock<IUnitPriceRepository>();
+        unitPriceRepositoryMock
+            .SetupSequence((repo) => repo.GetUnitPrice("A"))
+            .Returns(1)
+            .Returns(999);
+
+        var checkout = new CheckoutService(unitPriceRepositoryMock.Object, specialPriceRepositoryMock.Object);
+
+        checkout.Scan("A");
+
+        var expected = checkout.GetTotalPrice();
+
+        // Act
+        var actual = checkout.GetTotalPrice();
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void GetTotalPrice_WhenSpecialPricesUpdateDuringCheckout_ReturnsTotalInitialPrice() 
+    {
+        // Arrange
+        var specialPriceRepositoryMock = new Mock<ISpecialPriceRepository>();
+        specialPriceRepositoryMock
+            .SetupSequence((repo) => repo.GetSpecialPrice("A"))
+            .Returns(new SpecialPrice("A", 3, 25))
+            .Returns(new SpecialPrice("A", 3, 999));
+
+        var unitPriceRepositoryMock = new Mock<IUnitPriceRepository>();
+        unitPriceRepositoryMock
+            .Setup((repo) => repo.GetUnitPrice("A"))
+            .Returns(10);
+
+        var checkout = new CheckoutService(unitPriceRepositoryMock.Object, specialPriceRepositoryMock.Object);
+
+        checkout.Scan("A");
+        checkout.Scan("A");
+        checkout.Scan("A");
+
+        var expected = checkout.GetTotalPrice();
+
+        // Act
+        var actual = checkout.GetTotalPrice();
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+
     #endregion GetTotalPrice
 }
