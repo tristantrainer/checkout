@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="BrightHR.Checkout.Application.Tests" />
+  </ItemGroup>
+
 </Project>
