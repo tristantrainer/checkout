@@ -23,9 +23,23 @@ internal sealed class CheckoutService(IUnitPriceRepository unitPriceRepository, 
 
         foreach(var sku in _items.Keys) 
         {
-            total += _items[sku] * unitPriceRepository.GetUnitPrice(sku);
+            var numberOfItems = _items[sku];
+
+            var (remaining, subtotal) = CalculateDiscounted(sku, numberOfItems);
+
+            total += subtotal + remaining * unitPriceRepository.GetUnitPrice(sku);
         }
 
         return total;
+    }
+
+    private (int RemainingItems, int Total) CalculateDiscounted(string sku, int initialItems) 
+    {
+        var specialPrice = specialPriceRepository.GetSpecialPrice(sku);
+
+        if(specialPrice is null)
+            return (initialItems, 0);
+
+        throw new NotImplementedException();
     }
 }
