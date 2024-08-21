@@ -19,11 +19,15 @@
             "label": "test",
             "command": "dotnet",
             "type": "process",
+            "group": { "kind": "test", "isDefault": true },
             "args": [
                 "test",
                 "${workspaceFolder}/checkout.sln",
                 "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary;ForceNoAlign"
+                "/consoleloggerparameters:NoSummary;ForceNoAlign",
+                "/p:CollectCoverage=true",
+                "/p:CoverletOutputFormat=lcov",
+                "/p:CoverletOutput=${workspaceFolder}/etc/coverage/lcov.info"
             ],
             "problemMatcher": "$msCompile"
         },
