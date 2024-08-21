@@ -33,7 +33,7 @@ internal sealed class CheckoutService(IUnitPriceRepository unitPriceRepository, 
         {
             var numberOfItems = _items[sku];
 
-            var (remaining, subtotal) = CalculateDiscountedItems(sku, numberOfItems);
+            var (remaining, subtotal) = CalculateDiscountedItemsTotal(sku, numberOfItems);
 
             total += subtotal + remaining * _unitPrices[sku].Price;
         }
@@ -41,17 +41,17 @@ internal sealed class CheckoutService(IUnitPriceRepository unitPriceRepository, 
         return total;
     }
 
-    private (int RemainingItems, int Total) CalculateDiscountedItems(string sku, int initialItems) 
+    private (int RemainingItems, int Total) CalculateDiscountedItemsTotal(string sku, int initialItems) 
     {
         if(_specialPrices.ContainsKey(sku) is false)
             return (initialItems, 0);
 
         var specialPrice = _specialPrices[sku];
 
-        var discountedQuanity = initialItems / specialPrice.Quantity;
+        var discountedQuantity = initialItems / specialPrice.Quantity;
         var remainingItems = initialItems % specialPrice.Quantity;
 
-        var subtotal = discountedQuanity * specialPrice.Price;
+        var subtotal = discountedQuantity * specialPrice.Price;
 
         return (remainingItems, subtotal);
     }
