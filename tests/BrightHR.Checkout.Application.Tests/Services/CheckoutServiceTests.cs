@@ -32,8 +32,8 @@ public class CheckoutServiceTests
         var specialPriceRepositoryMock = new Mock<ISpecialPriceRepository>();
         var unitPriceRepositoryMock = new Mock<IUnitPriceRepository>();
         unitPriceRepositoryMock
-            .Setup((repo) => repo.GetUnitPrice("A"))
-            .Returns(123);
+            .Setup((repo) => repo.GetCurrentUnitPrices())
+            .Returns([new UnitPrice("A", 123)]);
 
         var checkout = new CheckoutService(unitPriceRepositoryMock.Object, specialPriceRepositoryMock.Object);
         var expected = 123;
@@ -54,14 +54,12 @@ public class CheckoutServiceTests
         var specialPriceRepositoryMock = new Mock<ISpecialPriceRepository>();
         var unitPriceRepositoryMock = new Mock<IUnitPriceRepository>();
         unitPriceRepositoryMock
-            .Setup((repo) => repo.GetUnitPrice("A"))
-            .Returns(1);
-        unitPriceRepositoryMock
-            .Setup((repo) => repo.GetUnitPrice("B"))
-            .Returns(20);
-        unitPriceRepositoryMock
-            .Setup((repo) => repo.GetUnitPrice("C"))
-            .Returns(300);
+            .Setup((repo) => repo.GetCurrentUnitPrices())
+            .Returns([
+                new UnitPrice("A", 1), 
+                new UnitPrice("B", 20), 
+                new UnitPrice("C", 300)
+            ]);
 
         var checkout = new CheckoutService(unitPriceRepositoryMock.Object, specialPriceRepositoryMock.Object);
         var expected = 321;
@@ -83,13 +81,13 @@ public class CheckoutServiceTests
         // Arrange
         var specialPriceRepositoryMock = new Mock<ISpecialPriceRepository>();
         specialPriceRepositoryMock
-            .Setup((repo) => repo.GetSpecialPrice("A"))
-            .Returns(new SpecialPrice("A", 3, 25));
+            .Setup((repo) => repo.GetCurrentSpecialPrices())
+            .Returns([new SpecialPrice("A", 3, 25)]);
 
         var unitPriceRepositoryMock = new Mock<IUnitPriceRepository>();
         unitPriceRepositoryMock
-            .Setup((repo) => repo.GetUnitPrice("A"))
-            .Returns(10);
+            .Setup((repo) => repo.GetCurrentUnitPrices())
+            .Returns([new UnitPrice("A", 10)]);
 
         var checkout = new CheckoutService(unitPriceRepositoryMock.Object, specialPriceRepositoryMock.Object);
         var expected = 25;
@@ -114,23 +112,19 @@ public class CheckoutServiceTests
 
         var specialPriceRepositoryMock = new Mock<ISpecialPriceRepository>();
         specialPriceRepositoryMock
-            .Setup((repo) => repo.GetSpecialPrice("A"))
-            .Returns(new SpecialPrice("A", 3, 25));
+            .Setup((repo) => repo.GetCurrentSpecialPrices())
+            .Returns([new SpecialPrice("A", 3, 25)]);
 
         var unitPriceRepositoryMock = new Mock<IUnitPriceRepository>();
         unitPriceRepositoryMock
-            .Setup((repo) => repo.GetUnitPrice("A"))
-            .Returns(10);
-        unitPriceRepositoryMock
-            .Setup((repo) => repo.GetUnitPrice("B"))
-            .Returns(100);
-        unitPriceRepositoryMock
-            .Setup((repo) => repo.GetUnitPrice("C"))
-            .Returns(1000);
-        unitPriceRepositoryMock
-            .Setup((repo) => repo.GetUnitPrice("D"))
-            .Returns(10000);
-
+            .Setup((repo) => repo.GetCurrentUnitPrices())
+            .Returns([
+                new UnitPrice("A", 10), 
+                new UnitPrice("B", 100), 
+                new UnitPrice("C", 1_000),
+                new UnitPrice("D", 10_000),
+            ]);
+            
         var checkout = new CheckoutService(unitPriceRepositoryMock.Object, specialPriceRepositoryMock.Object);
         var expected = 12235;
 
@@ -153,9 +147,9 @@ public class CheckoutServiceTests
         var specialPriceRepositoryMock = new Mock<ISpecialPriceRepository>();
         var unitPriceRepositoryMock = new Mock<IUnitPriceRepository>();
         unitPriceRepositoryMock
-            .SetupSequence((repo) => repo.GetUnitPrice("A"))
-            .Returns(1)
-            .Returns(999);
+            .SetupSequence((repo) => repo.GetCurrentUnitPrices())
+            .Returns([new UnitPrice("A", 1)])
+            .Returns([new UnitPrice("A", 999)]);
 
         var checkout = new CheckoutService(unitPriceRepositoryMock.Object, specialPriceRepositoryMock.Object);
 
@@ -176,14 +170,14 @@ public class CheckoutServiceTests
         // Arrange
         var specialPriceRepositoryMock = new Mock<ISpecialPriceRepository>();
         specialPriceRepositoryMock
-            .SetupSequence((repo) => repo.GetSpecialPrice("A"))
-            .Returns(new SpecialPrice("A", 3, 25))
-            .Returns(new SpecialPrice("A", 3, 999));
+            .SetupSequence((repo) => repo.GetCurrentSpecialPrices())
+            .Returns([new SpecialPrice("A", 3, 25)])
+            .Returns([new SpecialPrice("A", 3, 999)]);
 
         var unitPriceRepositoryMock = new Mock<IUnitPriceRepository>();
         unitPriceRepositoryMock
-            .Setup((repo) => repo.GetUnitPrice("A"))
-            .Returns(10);
+            .Setup((repo) => repo.GetCurrentUnitPrices())
+            .Returns([new UnitPrice("A", 1)]);
 
         var checkout = new CheckoutService(unitPriceRepositoryMock.Object, specialPriceRepositoryMock.Object);
 

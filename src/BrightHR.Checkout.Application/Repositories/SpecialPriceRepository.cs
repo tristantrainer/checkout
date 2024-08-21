@@ -4,5 +4,6 @@ namespace BrightHR.Checkout.Application.Repositories;
 
 public interface ISpecialPriceRepository
 {
-    SpecialPrice GetSpecialPrice(string sku);
+    SpecialPrice? GetSpecialPrice(string sku);
+    SpecialPrice[] GetCurrentSpecialPrices();
 }

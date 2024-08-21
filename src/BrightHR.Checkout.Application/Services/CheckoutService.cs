@@ -1,3 +1,4 @@
+using BrightHR.Checkout.Application.Entities;
 using BrightHR.Checkout.Application.Repositories;
 
 namespace BrightHR.Checkout.Application.Services;
@@ -12,9 +13,16 @@ internal sealed class CheckoutService(IUnitPriceRepository unitPriceRepository, 
 {
     private readonly Dictionary<string, int> _items = [];
 
+    private readonly Dictionary<string, UnitPrice> _unitPrices = unitPriceRepository
+        .GetCurrentUnitPrices()
+        .ToDictionary((price) => price.SKU, (price) => price);
+    private readonly Dictionary<string, SpecialPrice> _specialPrices = specialPriceRepository
+        .GetCurrentSpecialPrices()
+        .ToDictionary((price) => price.SKU, (price) => price);
+
     public void Scan(string sku)
     {
-        _items[sku] = _items.ContainsKey(sku) ? _items[sku] + 1 : 1;
+        _items[sku] = _items.TryGetValue(sku, out int value) ? value + 1 : 1;
     }
 
     public int GetTotalPrice()
@@ -25,20 +33,20 @@ internal sealed class CheckoutService(IUnitPriceRepository unitPriceRepository, 
         {
             var numberOfItems = _items[sku];
 
-            var (remaining, subtotal) = CalculateDiscounted(sku, numberOfItems);
+            var (remaining, subtotal) = CalculateDiscountedItems(sku, numberOfItems);
 
-            total += subtotal + remaining * unitPriceRepository.GetUnitPrice(sku);
+            total += subtotal + remaining * _unitPrices[sku].Price;
         }
 
         return total;
     }
 
-    private (int RemainingItems, int Total) CalculateDiscounted(string sku, int initialItems) 
+    private (int RemainingItems, int Total) CalculateDiscountedItems(string sku, int initialItems) 
     {
-        var specialPrice = specialPriceRepository.GetSpecialPrice(sku);
-
-        if(specialPrice is null)
+        if(_specialPrices.ContainsKey(sku) is false)
             return (initialItems, 0);
+
+        var specialPrice = _specialPrices[sku];
 
         var discountedQuanity = initialItems / specialPrice.Quantity;
         var remainingItems = initialItems % specialPrice.Quantity;
