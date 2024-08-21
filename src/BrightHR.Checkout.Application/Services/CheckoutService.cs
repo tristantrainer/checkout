@@ -6,7 +6,7 @@ namespace BrightHR.Checkout.Application.Services;
 
 public interface ICheckout
 {
-    void Scan(string sku);
+    void Scan(string item);
     int GetTotalPrice();
 }
 
@@ -21,9 +21,9 @@ internal sealed class CheckoutService(IUnitPriceRepository unitPriceRepository, 
         .GetCurrentSpecialPrices()
         .ToDictionary((price) => price.SKU, (price) => price);
 
-    public void Scan(string sku)
+    public void Scan(string item)
     {
-        _items.AddOrUpdate(sku, 1, (count) => count + 1);
+        _items.AddOrUpdate(item, 1, (count) => count + 1);
     }
 
     public int GetTotalPrice()
