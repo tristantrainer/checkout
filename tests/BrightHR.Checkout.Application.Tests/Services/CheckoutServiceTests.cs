@@ -24,10 +24,10 @@ public class CheckoutServiceTests
     public void GetTotalPrice_WhenItemScanned_ReturnsItemPrice() 
     {
         // Arrange
-        var itemPrice = 123;
-
         var checkout = new CheckoutService();
-        var expected = itemPrice;
+        var expected = 123;
+
+        checkout.Scan("A");
 
         // Act
         var actual = checkout.GetTotalPrice();
