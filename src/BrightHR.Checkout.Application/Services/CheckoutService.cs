@@ -8,17 +8,24 @@ public interface ICheckout
     int GetTotalPrice();
 }
 
-internal sealed class CheckoutService(IUnitPriceRepository unitPriceRepository) : ICheckout
+internal sealed class CheckoutService(IUnitPriceRepository unitPriceRepository, ISpecialPriceRepository specialPriceRepository) : ICheckout
 {
-    private int _currentTotal = 0;
+    private readonly Dictionary<string, int> _items = [];
 
     public void Scan(string sku)
     {
-        _currentTotal += unitPriceRepository.GetUnitPrice(sku);
+        _items[sku] += _items.ContainsKey(sku) ? _items[sku] + 1 : 1;
     }
 
     public int GetTotalPrice()
     {
-        return _currentTotal;
+        var total = 0;
+
+        foreach(var sku in _items.Keys) 
+        {
+            total += _items[sku] * unitPriceRepository.GetUnitPrice(sku);
+        }
+
+        return total;
     }
 }

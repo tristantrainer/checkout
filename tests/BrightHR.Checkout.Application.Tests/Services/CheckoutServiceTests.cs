@@ -1,3 +1,4 @@
+using BrightHR.Checkout.Application.Entities;
 using BrightHR.Checkout.Application.Repositories;
 using BrightHR.Checkout.Application.Services;
 using Moq;
@@ -13,7 +14,8 @@ public class CheckoutServiceTests
     {
         // Arrange
         var unitPriceRepositoryMock = new Mock<IUnitPriceRepository>();
-        var checkout = new CheckoutService(unitPriceRepositoryMock.Object);
+        var specialPriceRepositoryMock = new Mock<ISpecialPriceRepository>();
+        var checkout = new CheckoutService(unitPriceRepositoryMock.Object, specialPriceRepositoryMock.Object);
         var expected = 0;
 
         // Act
@@ -27,16 +29,16 @@ public class CheckoutServiceTests
     public void GetTotalPrice_WhenItemScanned_ReturnsItemPrice() 
     {
         // Arrange
-        var unitPrice = 123;
-        var sku = "A";
-
+        var specialPriceRepositoryMock = new Mock<ISpecialPriceRepository>();
         var unitPriceRepositoryMock = new Mock<IUnitPriceRepository>();
-        unitPriceRepositoryMock.Setup((repo) => repo.GetUnitPrice(sku)).Returns(unitPrice);
+        unitPriceRepositoryMock
+            .Setup((repo) => repo.GetUnitPrice("A"))
+            .Returns(123);
 
-        var checkout = new CheckoutService(unitPriceRepositoryMock.Object);
+        var checkout = new CheckoutService(unitPriceRepositoryMock.Object, specialPriceRepositoryMock.Object);
         var expected = 123;
 
-        checkout.Scan(sku);
+        checkout.Scan("A");
 
         // Act
         var actual = checkout.GetTotalPrice();
@@ -46,9 +48,10 @@ public class CheckoutServiceTests
     }
 
     [Fact]
-    public void GetTotalPrice_WhenMultipleItemScanned_ReturnsSumOfUnitPrices() 
+    public void GetTotalPrice_WhenMultipleItemsScannedAndNotSpecialPrice_ReturnsTotalPrice() 
     {
         // Arrange
+        var specialPriceRepositoryMock = new Mock<ISpecialPriceRepository>();
         var unitPriceRepositoryMock = new Mock<IUnitPriceRepository>();
         unitPriceRepositoryMock
             .Setup((repo) => repo.GetUnitPrice("A"))
@@ -60,12 +63,40 @@ public class CheckoutServiceTests
             .Setup((repo) => repo.GetUnitPrice("C"))
             .Returns(300);
 
-        var checkout = new CheckoutService(unitPriceRepositoryMock.Object);
+        var checkout = new CheckoutService(unitPriceRepositoryMock.Object, specialPriceRepositoryMock.Object);
         var expected = 321;
 
         checkout.Scan("A");
         checkout.Scan("B");
         checkout.Scan("C");
+
+        // Act
+        var actual = checkout.GetTotalPrice();
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void GetTotalPrice_WhenSpecialPriceApplies_ReturnsSpecialPrice() 
+    {
+        // Arrange
+        var specialPriceRepositoryMock = new Mock<ISpecialPriceRepository>();
+        specialPriceRepositoryMock
+            .Setup((repo) => repo.GetSpecialPrice("A"))
+            .Returns(new SpecialPrice("A", 3, 25));
+
+        var unitPriceRepositoryMock = new Mock<IUnitPriceRepository>();
+        unitPriceRepositoryMock
+            .Setup((repo) => repo.GetUnitPrice("A"))
+            .Returns(10);
+
+        var checkout = new CheckoutService(unitPriceRepositoryMock.Object, specialPriceRepositoryMock.Object);
+        var expected = 25;
+
+        checkout.Scan("A");
+        checkout.Scan("A");
+        checkout.Scan("A");
 
         // Act
         var actual = checkout.GetTotalPrice();
