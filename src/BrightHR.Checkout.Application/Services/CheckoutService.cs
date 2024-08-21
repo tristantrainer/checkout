@@ -32,28 +32,36 @@ internal sealed class CheckoutService(IUnitPriceRepository unitPriceRepository, 
 
         foreach(var sku in _items.Keys) 
         {
-            var numberOfItems = _items[sku];
-
-            var (remaining, discountedTotal) = CalculateDiscountedItemsTotal(sku, numberOfItems);
-
-            total += discountedTotal + remaining * _unitPrices[sku].Price;
+            total += CalculateTotalForItem(sku);
         }
 
         return total;
     }
 
-    private (int RemainingItems, int Total) CalculateDiscountedItemsTotal(string sku, int initialItems) 
+    private int CalculateTotalForItem(string sku)
+    {
+        var numberOfItems = _items[sku];
+
+        var (specialPriceTotal, remainingItems) = CalculateSpecialPriceTotal(sku, numberOfItems);
+        var remainingTotal = CalculateUnitPriceTotal(sku, remainingItems);
+        
+        return specialPriceTotal + remainingTotal;
+    }
+
+    private (int Total, int RemainingItems) CalculateSpecialPriceTotal(string sku, int numberOfItems) 
     {
         if(_specialPrices.ContainsKey(sku) is false)
-            return (initialItems, 0);
+            return (0, numberOfItems);
 
         var specialPrice = _specialPrices[sku];
+        var numberOfSpecialPriceItems = numberOfItems / specialPrice.Quantity;
+        var numberOfUndiscountedItems = numberOfItems % specialPrice.Quantity;
 
-        var discountedQuantity = initialItems / specialPrice.Quantity;
-        var remainingItems = initialItems % specialPrice.Quantity;
+        return (numberOfSpecialPriceItems * specialPrice.Price, numberOfUndiscountedItems);
+    }
 
-        var discountedTotal = discountedQuantity * specialPrice.Price;
-
-        return (remainingItems, discountedTotal);
+    private int CalculateUnitPriceTotal(string sku, int numberOfItems)
+    {
+        return numberOfItems * _unitPrices[sku].Price;
     }
 }
