@@ -12,3 +12,6 @@
 
 ## Price Updates
 - [✔] The system should **fix prices at the start of a checkout transaction** rather than using the most recent price updates during the transaction.
+
+## Futher steps not specified in the assignment:
+- Implement the price repositories, perhaps poorly named effectively just a list of unit and special prices. The interface defines the contract though so implementation is not restricted i.e. could be a list passed from somewhere else or it could be done based on a transaction approach, fetching prices from a database asof a certain timestamp (when the checkout is created).
